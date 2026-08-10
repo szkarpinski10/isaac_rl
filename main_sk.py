@@ -19,6 +19,7 @@ simulation_app=app_launcher.app
 
 from isaaclab.sim import SimulationCfg, SimulationContext
 from isaaclab.scene import InteractiveScene
+
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
 from franka_sk_cfg import FrankaSceneCfg_SK
@@ -29,7 +30,7 @@ def main():
     sim=SimulationContext(sim_cfg)
 
     #My scene
-    scene_cfg = FrankaSceneCfg_SK(num_envs=2, env_spacing = 3.0)
+    scene_cfg = FrankaSceneCfg_SK(num_envs=4, env_spacing = 3.0)
     scene = InteractiveScene(scene_cfg)
 
     #Set main camera
@@ -43,8 +44,8 @@ def main():
 
     #Simulate physics
     while simulation_app.is_running():
-        sim.step()
         scene.write_data_to_sim()
+        sim.step()
         scene.update(dt=sim.get_physics_dt())
 
 if __name__== "__main__":

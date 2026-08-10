@@ -11,6 +11,8 @@ from isaaclab.terrains import TerrainImporterCfg
 from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
 from isaaclab.utils.configclass import configclass
 
+
+from isaaclab_assets import FRANKA_PANDA_CFG
 @configclass
 class FrankaSceneCfg_SK(InteractiveSceneCfg):
 
@@ -19,7 +21,8 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
     robot = ArticulationCfg(
         prim_path = "/World/envs/env.*/Robot",
         spawn = sim_utils.UsdFileCfg(
-            usd_path = f"{ISAACLAB_NUCLEUS_DIR}/Robots/FrankaEmika/Legacy/panda_instanceable.usd",
+            #usd_path = f"{ISAACLAB_NUCLEUS_DIR}/Robots/FrankaEmika/Legacy/panda_instanceable.usd",
+            usd_path="http://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.0/Isaac/Robots/Franka/franka_instanceable.usd",
             activate_contact_sensors=False,
             rigid_props=sim_utils.RigidBodyPropertiesCfg(
                 disable_gravity= False,
@@ -35,14 +38,14 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
         ),
         init_state=ArticulationCfg.InitialStateCfg(
             joint_pos={
-                "panda_joint1":0.0,
-                "panda_joint2":0.0,
-                "panda_joint3":0.0,
-                "panda_joint4":0.0,
-                "panda_joint5":0.0,
-                "panda_joint6":0.0,
-                "panda_joint7":0.0,
-                "panda_finger_joint.*":0.4,
+                "panda_joint1":1.157,
+                "panda_joint2":-1.066,
+                "panda_joint3":-0.155,
+                "panda_joint4":-2.239,
+                "panda_joint5":-1.841,
+                "panda_joint6":1.003,
+                "panda_joint7":0.469,
+                "panda_finger_joint.*":0.035,
             },
             pos=(0.0,0.0,0.0),
             rot=(1.0,0.0,0.0,0.0),
@@ -73,14 +76,31 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
         }
     )
 
+# #stół -------------------------------------------------------------------------------------------------------------------------------
+#     table=AssetBaseCfg(
+#         prim_path="/World/envs/env.*/table",
+#         spawn=sim_utils.UsdFileCfg(
+#             #usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Tables/table.usd",
+#             usd_path="http://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.0/Isaac/Props/Tables/table.usd",
+#         ),
+#         init_state=AssetBaseCfg.InitialStateCfg(
+#             pos=(0.5,0.0,0.0),
+#         ),
+#     )
+
+
+
 #stół -------------------------------------------------------------------------------------------------------------------------------
-    table=AssetBaseCfg(
+    table = AssetBaseCfg(
         prim_path="/World/envs/env.*/table",
-        spawn=sim_utils.UsdFileCfg(
-            usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Tables/table.usd",
+        # Generujemy własny stół zamiast pobierać go z sieci
+        spawn=sim_utils.CuboidCfg(
+            size=(0.6, 0.6, 0.4), # Długość, szerokość, wysokość (w metrach)
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.3, 0.3, 0.3)), # Ciemnoszary kolor
         ),
         init_state=AssetBaseCfg.InitialStateCfg(
-            pos=(0.5,0.0,0.0),
+            # Ważne: skoro stół ma 0.4m wysokości, musimy go podnieść o równe pół (0.2m), żeby stał płasko na ziemi
+            pos=(0.5, 0.0, 0.2), 
         ),
     )
 
