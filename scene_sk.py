@@ -10,104 +10,73 @@ from isaaclab.sim import SimulationCfg
 from isaaclab.terrains import TerrainImporterCfg
 from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
 from isaaclab.utils.configclass import configclass
+from isaaclab.sim.spawners.from_files.from_files_cfg import UsdFileCfg, GroundPlaneCfg
 
 from isaaclab_assets import FRANKA_PANDA_CFG
 @configclass
 class FrankaSceneCfg_SK(InteractiveSceneCfg):
 
 
-#robot -------------------------------------------------------------------------------------------------------------------------------
-    robot = ArticulationCfg(
-        prim_path = "/World/envs/env.*/Robot",
-        spawn = sim_utils.UsdFileCfg(
-            #usd_path = f"{ISAACLAB_NUCLEUS_DIR}/Robots/FrankaEmika/Legacy/panda_instanceable.usd",
-            usd_path="http://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.0/Isaac/Robots/Franka/franka_instanceable.usd",
-            activate_contact_sensors=False,
-            rigid_props=sim_utils.RigidBodyPropertiesCfg(
-                disable_gravity= False,
-                max_depenetration_velocity=5.0,
-
-            ),
-            articulation_props=sim_utils.ArticulationRootPropertiesCfg(
-                enabled_self_collisions=False,
-                solver_position_iteration_count=12,
-                solver_velocity_iteration_count=1,
-            ),
-
-        ),
+    #robot -------------------------------------------------------------------------------------------------------------------------------
+    robot = FRANKA_PANDA_CFG.replace(
+        prim_path="{ENV_REGEX_NS}/Robot",
         init_state=ArticulationCfg.InitialStateCfg(
             joint_pos={
-                "panda_joint1":1.157,
-                "panda_joint2":-1.066,
-                "panda_joint3":-0.155,
-                "panda_joint4":-2.239,
-                "panda_joint5":-1.841,
-                "panda_joint6":1.003,
-                "panda_joint7":0.469,
-                "panda_finger_joint.*":0.035,
-            },
-            pos=(0.0,0.0,0.0),
-            rot=(1.0,0.0,0.0,0.0),
+                "panda_joint1": 1.157,
+                "panda_joint2": -1.066,
+                "panda_joint3": -0.155,
+                "panda_joint4": -2.239,
+                "panda_joint5": -1.841,
+                "panda_joint6": 1.003,
+                "panda_joint7": 0.469,
+                "panda_finger_joint.*": 0.035,
+        },
+        pos=(0.0, 0.0, 0.0),
+        rot=(1.0, 0.0, 0.0, 0.0),
         ),
         actuators={
-            "panda_shoulder":ImplicitActuatorCfg(
-                joint_names_expr=["panda_joint[1-4]"],
-                effort_limit_sim=87.0, # wartos w N
-                stiffness=80.0, 
-                damping=4.0, 
-            ),
-
-            "panda_forearm":ImplicitActuatorCfg(
-                joint_names_expr=["panda_joint[5-7]"],
-                effort_limit_sim=12.0, # wartos w N
-                stiffness=80.0, 
-                damping=4.0, 
-            ),
-
-
-            "panda_hand":ImplicitActuatorCfg(
-                joint_names_expr=["panda_finger_joint.*"],
-                effort_limit_sim=200.0, # wartos w N
-                stiffness=2e3, 
-                damping=1e2, 
-            ),
-
-        }
-    )
+        "panda_shoulder": ImplicitActuatorCfg(
+            joint_names_expr=["panda_joint[1-4]"],
+            effort_limit_sim=87.0,  # wartość w Nm
+            stiffness=80.0,
+            damping=4.0,
+        ),
+        "panda_forearm": ImplicitActuatorCfg(
+            joint_names_expr=["panda_joint[5-7]"],
+            effort_limit_sim=12.0,  # wartość w Nm
+            stiffness=80.0,
+            damping=4.0,
+        ),
+        "panda_hand": ImplicitActuatorCfg(
+            joint_names_expr=["panda_finger_joint.*"],
+            effort_limit_sim=200.0,  # wartość w N
+            stiffness=2e3,
+            damping=1e2,
+        ),
+    },
+)
 
 
 
 
 
-#stół -------------------------------------------------------------------------------------------------------------------------------
+    #stół -------------------------------------------------------------------------------------------------------------------------------
     table = AssetBaseCfg(
-        prim_path="/World/envs/env.*/table",
-        spawn=sim_utils.CuboidCfg(
-            size=(0.6, 0.6, 0.4),
-            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.3, 0.3, 0.3)), 
-        ),
-        init_state=AssetBaseCfg.InitialStateCfg(
-            pos=(0.5, 0.0, 0.2), 
-        ),
+        prim_path="{ENV_REGEX_NS}/Table",
+       init_state=AssetBaseCfg.InitialStateCfg(pos=[0.5,0,0],rot=[0,0,0,0]),
+       spawn=UsdFileCfg(usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Mounts/SeattleLabTable/table_instanceable.usd"),
     )
 
-#podłoga -------------------------------------------------------------------------------------------------------------------------------
-    terrain=TerrainImporterCfg(
-        prim_path="/World/ground",
-        terrain_type="plane",
-        collision_group=-1,
-        physics_material=sim_utils.RigidBodyMaterialCfg(
-            friction_combine_mode="multiply",
-            restitution_combine_mode="multiply",
-            static_friction=10.0,
-            dynamic_friction=10.0,
-            restitution=0.0,
-        )
+    #podłoga -------------------------------------------------------------------------------------------------------------------------------
+    ground= AssetBaseCfg(
+        prim_path="World/GroundPlane",
+        init_state=AssetBaseCfg.InitialStateCfg(pos=[0,0,0]),
+        spawn=GroundPlaneCfg(),
     )
 
-#kostka -------------------------------------------------------------------------------------------------------------------------------
+    #kostka -------------------------------------------------------------------------------------------------------------------------------
 
-cube = RigidObjectCfg(
+    cube = RigidObjectCfg(
     prim_path="{ENV_REGEX_NS}/Cube",
     init_state=RigidObjectCfg.InitialStateCfg(
         pos=(0.5,0.0,1.08),
@@ -127,4 +96,10 @@ cube = RigidObjectCfg(
             dynamic_friction=0.4,
         ),
     ),
-)
+    )
+
+    #light ------------------------------------------------------------------------------------------------------------------------------
+    light = AssetBaseCfg(
+        prim_path="/World/light",
+        spawn=sim_utils.DomeLightCfg(color=(0.75, 0.75, 0.75), intensity=3000.0),
+    )

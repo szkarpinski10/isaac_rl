@@ -22,7 +22,7 @@ from isaaclab.scene import InteractiveScene
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
-from franka_sk_cfg import FrankaSceneCfg_SK
+from scripts.inz.isaac_rl.scene_sk import FrankaSceneCfg_SK
 def main():
 
     #Initialize the simulation context
