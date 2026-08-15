@@ -22,7 +22,7 @@ from isaaclab.scene import InteractiveScene
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
-from scene_sk import FrankaSceneCfg_SK 
+from scene_sk import FrankaSceneCfg_SK, Event_rand_SK
 def main():
 
     #Initialize the simulation context
@@ -32,6 +32,9 @@ def main():
     #My scene
     scene_cfg = FrankaSceneCfg_SK(num_envs=9, env_spacing = 3.0)
     scene = InteractiveScene(scene_cfg)
+
+    #events
+    events=Event_rand_SK()
 
     #Set main camera
     sim.set_camera_view([2.5,2.5,2.5],[0.0,0.0,0.0])

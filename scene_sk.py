@@ -13,6 +13,9 @@ from isaaclab.utils.configclass import configclass
 from isaaclab.sim.spawners.from_files.from_files_cfg import UsdFileCfg, GroundPlaneCfg
 
 from isaaclab_assets import FRANKA_PANDA_CFG
+import isaaclab.envs.mdp as mdp
+from isaaclab.managers import EventTermCfg as EventTerm
+from isaaclab.managers import SceneEntityCfg
 @configclass
 class FrankaSceneCfg_SK(InteractiveSceneCfg):
 
@@ -108,4 +111,18 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
     light = AssetBaseCfg(
         prim_path="/World/light",
         spawn=sim_utils.DomeLightCfg(color=(0.75, 0.75, 0.75), intensity=3000.0),
+    )
+
+
+
+@configclass
+class Event_rand_SK:
+    randomize_cube_positions= EventTerm(
+        func=mdp.reset_root_state_uniform,
+        mode="reset",
+        params={
+            "pose_range": {"x": (-0.3,0.3),"y":(-0.3,0.3),"z":(0.0,0.0)},
+            #"min_separation": 0.1,
+            "asset_cfgs": SceneEntityCfg("cube"),
+        }
     )
