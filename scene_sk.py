@@ -3,14 +3,13 @@ from __future__ import annotations
 
 import isaaclab.sim as sim_utils
 from isaaclab.actuators import ImplicitActuatorCfg
-from isaaclab.assets import ArticulationCfg, AssetBaseCfg
+from isaaclab.assets import ArticulationCfg, AssetBaseCfg, RigidObjectCfg
 from isaaclab.envs import DirectRLEnvCfg, ManagerBasedRLEnvCfg
 from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.sim import SimulationCfg
 from isaaclab.terrains import TerrainImporterCfg
 from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
 from isaaclab.utils.configclass import configclass
-
 
 from isaaclab_assets import FRANKA_PANDA_CFG
 @configclass
@@ -76,34 +75,23 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
         }
     )
 
-# #stół -------------------------------------------------------------------------------------------------------------------------------
-#     table=AssetBaseCfg(
-#         prim_path="/World/envs/env.*/table",
-#         spawn=sim_utils.UsdFileCfg(
-#             #usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Tables/table.usd",
-#             usd_path="http://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.0/Isaac/Props/Tables/table.usd",
-#         ),
-#         init_state=AssetBaseCfg.InitialStateCfg(
-#             pos=(0.5,0.0,0.0),
-#         ),
-#     )
+
 
 
 
 #stół -------------------------------------------------------------------------------------------------------------------------------
     table = AssetBaseCfg(
         prim_path="/World/envs/env.*/table",
-        # Generujemy własny stół zamiast pobierać go z sieci
         spawn=sim_utils.CuboidCfg(
-            size=(0.6, 0.6, 0.4), # Długość, szerokość, wysokość (w metrach)
-            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.3, 0.3, 0.3)), # Ciemnoszary kolor
+            size=(0.6, 0.6, 0.4),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.3, 0.3, 0.3)), 
         ),
         init_state=AssetBaseCfg.InitialStateCfg(
-            # Ważne: skoro stół ma 0.4m wysokości, musimy go podnieść o równe pół (0.2m), żeby stał płasko na ziemi
             pos=(0.5, 0.0, 0.2), 
         ),
     )
 
+#podłoga -------------------------------------------------------------------------------------------------------------------------------
     terrain=TerrainImporterCfg(
         prim_path="/World/ground",
         terrain_type="plane",
@@ -111,10 +99,32 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
         physics_material=sim_utils.RigidBodyMaterialCfg(
             friction_combine_mode="multiply",
             restitution_combine_mode="multiply",
-            static_friction=1.0,
-            dynamic_friction=1.0,
+            static_friction=10.0,
+            dynamic_friction=10.0,
             restitution=0.0,
         )
     )
 
-    #-----------
+#kostka -------------------------------------------------------------------------------------------------------------------------------
+
+cube = RigidObjectCfg(
+    prim_path="{ENV_REGEX_NS}/Cube",
+    init_state=RigidObjectCfg.InitialStateCfg(
+        pos=(0.5,0.0,1.08),
+    ),
+    spawn = sim_utils.CuboidCfg(
+        size=(0.05,0.05,0.05),
+        rigid_props=sim_utils.RigidBodyProgertiesCfg(
+            disable_gravity=False,
+
+        ),
+        collision_props=sim_utils.CollisionPropertiesCfg(),
+        visual_material=sim_utils.PreviewSurfaceCfg(
+            diffuse_color=(1.0,0.0,0.0),
+        ),
+        physics_material=sim_utils.RigidBodyMaterialCfg(
+            static_friction=0.5,
+            dynamic_friction=0.4,
+        ),
+    ),
+)
