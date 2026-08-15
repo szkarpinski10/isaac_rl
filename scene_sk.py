@@ -18,6 +18,9 @@ from isaaclab.managers import EventTermCfg as EventTerm
 from isaaclab.managers import SceneEntityCfg
 from isaaclab_tasks.manager_based.manipulation.stack.mdp import franka_stack_events
 
+from isaaclab.envs import ManagerBasedRLEnvCfg
+from isaaclab.managers import ActionTermCfg as ActionTerm
+from isaaclab.utils.configclass import configclass
 
 @configclass
 class FrankaSceneCfg_SK(InteractiveSceneCfg):
@@ -130,16 +133,52 @@ class Event_rand_SK:
             "asset_cfgs": SceneEntityCfg("cube"),
         }
     )
+##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
+@configclass
+class ActionsCfg:
+    """Pusta konfiguracja akcji na start"""
+
+    pass
+
+
+@configclass
+class ObservationsCfg:
+    """Pusta konfiguracja obserwacji"""
+
+    @configclass
+    class PolicyCfg:
+        pass
+
+    policy: PolicyCfg = PolicyCfg()
+
+
+@configclass
+class RewardsCfg:
+    """Pusta konfiguracja nagród"""
+
+    pass
+
+
+@configclass
+class TerminationsCfg:
+    """Pusta konfiguracja zakończeń"""
+
+    pass
 
 @configclass
 class FrankaEnvCfg_SK(ManagerBasedRLEnvCfg):
 
-    scene: FrankaSceneCfg_SK = FrankaSceneCfg_SK(num_envs=9, evn_spacing=3.0)
+    scene: FrankaSceneCfg_SK = FrankaSceneCfg_SK(num_envs=9, env_spacing=3.0)
     events: Event_rand_SK = Event_rand_SK()
+    observations: ObservationsCfg = ObservationsCfg()
+    actions: ActionsCfg = ActionsCfg()
+    rewards: RewardsCfg = RewardsCfg()
+    terminations: TerminationsCfg = TerminationsCfg()
 
     def __post_init__(self):
         self.decimation=2
-        self.episode_lenght_s=90
+        self.episode_length_s=90
         self.sim.dt=0.01
         self.sim.render_interval=self.decimation
