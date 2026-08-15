@@ -1,27 +1,13 @@
-
 from __future__ import annotations
 
 import isaaclab.sim as sim_utils
 from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets import ArticulationCfg, AssetBaseCfg, RigidObjectCfg
-from isaaclab.envs import DirectRLEnvCfg, ManagerBasedRLEnvCfg
 from isaaclab.scene import InteractiveSceneCfg
-from isaaclab.sim import SimulationCfg
-from isaaclab.terrains import TerrainImporterCfg
-from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
+from isaaclab.sim.spawners.from_files.from_files_cfg import GroundPlaneCfg
 from isaaclab.utils.configclass import configclass
-from isaaclab.sim.spawners.from_files.from_files_cfg import UsdFileCfg, GroundPlaneCfg
 
 from isaaclab_assets import FRANKA_PANDA_CFG
-import isaaclab.envs.mdp as mdp
-from isaaclab.managers import EventTermCfg as EventTerm
-from isaaclab.managers import SceneEntityCfg
-from isaaclab_tasks.manager_based.manipulation.stack.mdp import franka_stack_events
-
-from isaaclab.envs import ManagerBasedRLEnvCfg
-from isaaclab.managers import ActionTermCfg as ActionTerm
-from isaaclab.utils.configclass import configclass
-
 @configclass
 class FrankaSceneCfg_SK(InteractiveSceneCfg):
 
@@ -121,64 +107,4 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
 
 
 
-@configclass
-class Event_rand_SK:
-    randomize_cube_positions= EventTerm(
-        func=franka_stack_events.randomize_object_pose,
-        mode="reset",
-        params={
-            "pose_range": {"x": (-0.3,0.3),"y":(-0.3,0.3),"z":(0.0,0.0),"yaw": (0.0,0.0,0.0)},
-            "min_separation": 0.1,
-            #"velocity_range": {},
-            "asset_cfgs": SceneEntityCfg("cube"),
-        }
-    )
-##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-@configclass
-class ActionsCfg:
-    """Pusta konfiguracja akcji na start"""
-
-    pass
-
-
-@configclass
-class ObservationsCfg:
-    """Pusta konfiguracja obserwacji"""
-
-    @configclass
-    class PolicyCfg:
-        pass
-
-    policy: PolicyCfg = PolicyCfg()
-
-
-@configclass
-class RewardsCfg:
-    """Pusta konfiguracja nagród"""
-
-    pass
-
-
-@configclass
-class TerminationsCfg:
-    """Pusta konfiguracja zakończeń"""
-
-    pass
-
-@configclass
-class FrankaEnvCfg_SK(ManagerBasedRLEnvCfg):
-
-    scene: FrankaSceneCfg_SK = FrankaSceneCfg_SK(num_envs=9, env_spacing=3.0)
-    events: Event_rand_SK = Event_rand_SK()
-    observations: ObservationsCfg = ObservationsCfg()
-    actions: ActionsCfg = ActionsCfg()
-    rewards: RewardsCfg = RewardsCfg()
-    terminations: TerminationsCfg = TerminationsCfg()
-
-    def __post_init__(self):
-        self.decimation=2
-        self.episode_length_s=90
-        self.sim.dt=0.01
-        self.sim.render_interval=self.decimation

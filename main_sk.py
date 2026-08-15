@@ -17,17 +17,13 @@ simulation_app=app_launcher.app
 
 #import modules
 
-from isaaclab.sim import SimulationCfg, SimulationContext
-from isaaclab.scene import InteractiveScene
-from isaaclab.managers import EventManager
+
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
-from scene_sk import FrankaSceneCfg_SK, Event_rand_SK
-
-
 import torch
+from isaaclab.envs import FrankaStackEnvCfg_SK
 from isaaclab.envs import ManagerBasedRLEnv
-from scene_sk import FrankaEnvCfg_SK
+
 # def main():
 
 #     #Initialize the simulation context
@@ -39,7 +35,7 @@ from scene_sk import FrankaEnvCfg_SK
 #     scene = InteractiveScene(scene_cfg)
 
 #     #events
-#     events= Event_rand_SK()
+#     env_cfg=FrankaSceneCfg_SK()
 
 #     #Set main camera
 #     sim.set_camera_view([2.5,2.5,2.5],[0.0,0.0,0.0])
@@ -65,20 +61,29 @@ from scene_sk import FrankaEnvCfg_SK
 #     simulation_app.close()
 
 def main():
-    # Inicjalizacja środowiska z gotowej konfiguracji
-    env_cfg = FrankaEnvCfg_SK()
+    # 1. Tworzymy konfigurację środowiska
+    env_cfg = FrankaStackEnvCfg_SK()
+    
+    # 2. Inicjalizujemy pełne środowisko RL (ono samo zarządza sim, sceną, eventami itp.)
     env = ManagerBasedRLEnv(cfg=env_cfg)
 
-    # Uruchomienie resetu - odpala automatycznie zdarzenia (Events) z trybem mode="reset"
+    # 3. Ustawienie głównej kamery (dostęp do sim przez env.unwrapped)
+    env.unwrapped.sim.set_camera_view([2.5, 2.5, 2.5], [0.0, 0.0, 0.0])
+
+    # 4. Reset środowiska - TUTAJ ODPALA SIĘ LOSOWANIE KOSTKI Z events_sk.py!
     obs, _ = env.reset()
 
-    print("[INFO]: Setup complete")
+    # INFO
+    print("[INFO]: Setup complete. Środowisko działa!")
 
-    # Główna pętla symulacji
+    # 5. Pętla symulacji
     while simulation_app.is_running():
-        # Losowe akcje testowe
-        actions = torch.zeros_like(env.action_manager.action)
-        obs, rewards, terminated, truncated, info = env.step(actions)
+        with torch.inference_mode():
+            # Na razie podajemy zerowe akcje (robot nic nie robi, tylko stoi w zdefiniowanej pozycji)
+            actions = torch.zeros_like(env.action_manager.action)
+            
+            # Krok środowiska (zastępuje ręczne sim.step())
+            obs, rewards, terminated, truncated, info = env.step(actions)
 
 
 if __name__ == "__main__":
