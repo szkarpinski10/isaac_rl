@@ -34,7 +34,7 @@ def main():
     scene = InteractiveScene(scene_cfg)
 
     #events
-    events=EventManager(Event_rand_SK(),scene)
+    events= Event_rand_SK()
 
     #Set main camera
     sim.set_camera_view([2.5,2.5,2.5],[0.0,0.0,0.0])

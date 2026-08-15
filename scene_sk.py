@@ -16,6 +16,9 @@ from isaaclab_assets import FRANKA_PANDA_CFG
 import isaaclab.envs.mdp as mdp
 from isaaclab.managers import EventTermCfg as EventTerm
 from isaaclab.managers import SceneEntityCfg
+from isaaclab_tasks.manager_based.manipulation.stack.mdp import franka_stack_events
+
+
 @configclass
 class FrankaSceneCfg_SK(InteractiveSceneCfg):
 
@@ -118,12 +121,12 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
 @configclass
 class Event_rand_SK:
     randomize_cube_positions= EventTerm(
-        func=mdp.reset_root_state_uniform,
+        func=franka_stack_events.randomize_object_pose,
         mode="reset",
         params={
-            "pose_range": {"x": (-0.3,0.3),"y":(-0.3,0.3),"z":(0.0,0.0)},
-            #"min_separation": 0.1,
-            "velocity_range": {},
+            "pose_range": {"x": (-0.3,0.3),"y":(-0.3,0.3),"z":(0.0,0.0),"yaw": (0.0,0.0,0.0)},
+            "min_separation": 0.1,
+            #"velocity_range": {},
             "asset_cfg": SceneEntityCfg("cube"),
         }
     )
