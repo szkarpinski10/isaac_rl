@@ -22,7 +22,7 @@ from isaaclab.scene import InteractiveScene
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
-from scripts.inz.isaac_rl.scene_sk import FrankaSceneCfg_SK
+from scene_sk import FrankaSceneCfg_SK 
 def main():
 
     #Initialize the simulation context
@@ -30,7 +30,7 @@ def main():
     sim=SimulationContext(sim_cfg)
 
     #My scene
-    scene_cfg = FrankaSceneCfg_SK(num_envs=4, env_spacing = 3.0)
+    scene_cfg = FrankaSceneCfg_SK(num_envs=9, env_spacing = 3.0)
     scene = InteractiveScene(scene_cfg)
 
     #Set main camera

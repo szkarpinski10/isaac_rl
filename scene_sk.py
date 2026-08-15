@@ -31,7 +31,7 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
                 "panda_joint7": 0.469,
                 "panda_finger_joint.*": 0.035,
         },
-        pos=(0.0, 0.0, 0.0),
+        pos=(0.0, 0.0, 0.5),
         rot=(1.0, 0.0, 0.0, 0.0),
         ),
         actuators={
@@ -63,13 +63,19 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
     #stół -------------------------------------------------------------------------------------------------------------------------------
     table = AssetBaseCfg(
         prim_path="{ENV_REGEX_NS}/Table",
-       init_state=AssetBaseCfg.InitialStateCfg(pos=[0.5,0,0],rot=[0,0,0,0]),
-       spawn=UsdFileCfg(usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Mounts/SeattleLabTable/table_instanceable.usd"),
+        init_state=AssetBaseCfg.InitialStateCfg(pos=[0.5,0,0.3],rot=[1.0,0,0,0]),
+        spawn=sim_utils.CuboidCfg(
+            size=(1.6, 1.2, 0.5), 
+            collision_props=sim_utils.CollisionPropertiesCfg(),
+            visual_material=sim_utils.PreviewSurfaceCfg(
+                diffuse_color=(0.2, 0.2, 0.2), 
+            ),
+        ),
     )
 
     #podłoga -------------------------------------------------------------------------------------------------------------------------------
     ground= AssetBaseCfg(
-        prim_path="World/GroundPlane",
+        prim_path="/World/GroundPlane",
         init_state=AssetBaseCfg.InitialStateCfg(pos=[0,0,0]),
         spawn=GroundPlaneCfg(),
     )
@@ -83,7 +89,7 @@ class FrankaSceneCfg_SK(InteractiveSceneCfg):
     ),
     spawn = sim_utils.CuboidCfg(
         size=(0.05,0.05,0.05),
-        rigid_props=sim_utils.RigidBodyProgertiesCfg(
+        rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=False,
 
         ),
