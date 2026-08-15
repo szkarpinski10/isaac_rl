@@ -19,7 +19,7 @@ simulation_app=app_launcher.app
 
 from isaaclab.sim import SimulationCfg, SimulationContext
 from isaaclab.scene import InteractiveScene
-
+from isaaclab.managers import EventManager
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
 from scene_sk import FrankaSceneCfg_SK, Event_rand_SK
@@ -34,13 +34,15 @@ def main():
     scene = InteractiveScene(scene_cfg)
 
     #events
-    events=Event_rand_SK()
+    events=EventManager(Event_rand_SK(),scene)
 
     #Set main camera
     sim.set_camera_view([2.5,2.5,2.5],[0.0,0.0,0.0])
 
     #Play the simulator
     sim.reset()
+
+
 
     #INFO
     print("[INFO]: Setup complete")

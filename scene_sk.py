@@ -123,6 +123,7 @@ class Event_rand_SK:
         params={
             "pose_range": {"x": (-0.3,0.3),"y":(-0.3,0.3),"z":(0.0,0.0)},
             #"min_separation": 0.1,
-            "asset_cfgs": SceneEntityCfg("cube"),
+            "velocity_range": {},
+            "asset_cfg": SceneEntityCfg("cube"),
         }
     )
