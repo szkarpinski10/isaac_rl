@@ -127,6 +127,19 @@ class Event_rand_SK:
             "pose_range": {"x": (-0.3,0.3),"y":(-0.3,0.3),"z":(0.0,0.0),"yaw": (0.0,0.0,0.0)},
             "min_separation": 0.1,
             #"velocity_range": {},
-            "asset_cfg": SceneEntityCfg("cube"),
+            "asset_cfgs": SceneEntityCfg("cube"),
         }
     )
+
+
+@configclass
+class FrankaEnvCfg_SK(ManagerBasedRLEnvCfg):
+
+    scene: FrankaSceneCfg_SK = FrankaSceneCfg_SK(num_envs=9, evn_spacing=3.0)
+    events: Event_rand_SK = Event_rand_SK()
+
+    def __post_init__(self):
+        self.decimation=2
+        self.episode_lenght_s=90
+        self.sim.dt=0.01
+        self.sim.render_interval=self.decimation
