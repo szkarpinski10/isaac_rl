@@ -21,7 +21,7 @@ simulation_app=app_launcher.app
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
 import torch
-from isaaclab.envs import FrankaStackEnvCfg_SK
+from scene_sk import FrankaStackEnvCfg_SK
 from isaaclab.envs import ManagerBasedRLEnv
 
 # def main():
