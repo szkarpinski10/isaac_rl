@@ -21,7 +21,7 @@ simulation_app=app_launcher.app
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
 import torch
-from scene_sk import FrankaStackEnvCfg_SK
+from scene_sk import FrankaSceneCfg_SK
 from isaaclab.envs import ManagerBasedRLEnv
 
 # def main():
@@ -62,7 +62,7 @@ from isaaclab.envs import ManagerBasedRLEnv
 
 def main():
     # 1. Tworzymy konfigurację środowiska
-    env_cfg = FrankaStackEnvCfg_SK()
+    env_cfg = FrankaSceneCfg_SK()
     
     # 2. Inicjalizujemy pełne środowisko RL (ono samo zarządza sim, sceną, eventami itp.)
     env = ManagerBasedRLEnv(cfg=env_cfg)
