@@ -35,7 +35,7 @@ class EventCfg:
         mode = "reset",
         params = {
             "mean" : 0.0,
-            "std" : 0.02,
+            "std" : 0.8,
             "asset_cfg": SceneEntityCfg("robot"),
         }
     )
@@ -43,7 +43,7 @@ class EventCfg:
         func = franka_stack_events.randomize_object_pose,
         mode = "reset",
         params={
-            "pose_range": {"x": (0.4, 0.6), "y": (-0.10, 0.10), "z": (0.0203, 0.0203), "yaw": (-1.0, 1, 0)},
+            "pose_range": {"x": (0.4, 0.6), "y": (-0.10, 0.10), "z": (0.6, 0.6), "yaw": (-1.0, 1, 0)},
             "min_separation": 0.1,
             "asset_cfgs": [SceneEntityCfg("cube_1"), SceneEntityCfg("cube_2"), SceneEntityCfg("cube_3")],
         },
@@ -55,12 +55,21 @@ class Franka_Env_Cfg(StackEnvCfg):
 
     def __post_init__(self):
         super().__post_init__()
+        self.scene.num_envs = 4         
+        self.scene.env_spacing = 3.0
+
+        # utilities for gripper status check
+        self.gripper_joint_names = ["panda_finger_.*"]
+        self.gripper_open_val = 0.04
+        self.gripper_threshold = 0.005
 
         self.events=EventCfg()
 
         self.scene.robot = FRANKA_PANDA_CFG.replace(
             prim_path = "{ENV_REGEX_NS}/Robot",
-            init_state = ArticulationCfg.InitialStateCfg(joint_pos = _FRANKA_STACK_IK_REL_INIT_JOINT_POS),
+            init_state = ArticulationCfg.InitialStateCfg(
+                pos = [0.0,0.0,0.55],
+                joint_pos = _FRANKA_STACK_IK_REL_INIT_JOINT_POS),
         )
 
         self.scene.table = AssetBaseCfg(

@@ -16,9 +16,7 @@
 
 
 import argparse
-import torch
 from isaaclab.app import AppLauncher
-from isaaclab.envs import ManagerBasedRLEnv
 
 # create argparser
 parser = argparse.ArgumentParser(description="Learning environment.")
@@ -32,6 +30,9 @@ simulation_app = app_launcher.app
 
 """Rest everything follows."""
 
+
+import torch
+from isaaclab.envs import ManagerBasedRLEnv
 from isaaclab.sim import SimulationCfg, SimulationContext
 from franka_SK import Franka_Env_Cfg
 
@@ -42,6 +43,7 @@ def main():
     env = ManagerBasedRLEnv(cfg=env_cfg)
     obs, _ = env.reset()
     print("env ready")
+    
 
     dummy_actions = torch.zeros(
         (env.num_envs, env.action_space.shape[1]), 
