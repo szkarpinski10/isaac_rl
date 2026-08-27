@@ -11,12 +11,7 @@ class EventCfg_SK:
         func=franka_stack_events.randomize_object_pose,
         mode="reset",
         params={
-            "pose_range": {
-                "x": (0.4, 0.6),
-                "y": (-0.10, 0.10),
-                "z": (0.58, 0.58),
-                "yaw": (-1.0, 1.0, 0),  # (min, max, step)
-            },
+            "pose_range": {"x": (0.4, 0.6),"y": (-0.10, 0.10),"z": (0.58, 0.58),"yaw": (-1.0, 1.0, 0)},
             "min_separation": 0.1,
             "asset_cfgs": [SceneEntityCfg("cube")],
         },
