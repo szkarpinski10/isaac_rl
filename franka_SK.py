@@ -15,6 +15,7 @@ from isaaclab_tasks.manager_based.manipulation.stack import mdp
 from isaaclab.envs.mdp import JointPositionActionCfg, BinaryJointPositionActionCfg
 from isaaclab.markers.config import FRAME_MARKER_CFG
 
+
 _FRANKA_STACK_IK_REL_INIT_JOINT_POS: dict[str, float] = {
     "panda_joint1": 0.0444,
     "panda_joint2": -0.1894,
@@ -149,8 +150,8 @@ class Franka_Env_Cfg(StackEnvCfg):
             ),
         )
 
-        self.actions.arm_action = mdp.JointPositionActions(
-            asset_name = "robot",joint_names = ["panda_joint.*"], scale = 0.5, use_deafault_offset = True
+        self.actions.arm_action = mdp.JointPositionActionCfg(
+            asset_name = "robot",joint_names = ["panda_joint.*"], scale = 0.5, use_default_offset = True
         )
 
         self.actions.gripper_action = mdp.BinaryJointPositionActionCfg(
