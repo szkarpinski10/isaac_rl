@@ -46,7 +46,7 @@ class EventCfg:
         mode = "reset",
         params={
             "pose_range": {"x": (0.4, 0.6), "y": (-0.10, 0.10), "z": (0.6, 0.6), "yaw": (-1.0, 1, 0)},
-            "min_separation": 0.1,
+            "min_separation": 0.2,
             "asset_cfgs": [SceneEntityCfg("cube_1"), SceneEntityCfg("cube_2"), SceneEntityCfg("cube_3")],
         },
     )
@@ -58,11 +58,13 @@ class RewardsCfg:
             "robot_cfg": SceneEntityCfg("robot"),
             "ee_frame_cfg": SceneEntityCfg("ee_frame"),
             "object_cfg": SceneEntityCfg("cube_1"),
-            "constant": 10.0,
+            "constant": 3.0,
             "object_grasped_reward": 5.0},weight = 1.0)
 
 @configclass
 class Franka_Env_Cfg(StackEnvCfg):
+    events: self.events=EventCfg()
+    rewards: self.rewards = RewardsCfg()
 
     def __post_init__(self):
         super().__post_init__()
@@ -74,8 +76,7 @@ class Franka_Env_Cfg(StackEnvCfg):
         self.gripper_open_val = 0.04
         self.gripper_threshold = 0.005
 
-        self.events=EventCfg()
-        self.rewards = RewardsCfg()
+       
 
         self.scene.robot = FRANKA_PANDA_CFG.replace(
             prim_path = "{ENV_REGEX_NS}/Robot",
