@@ -14,6 +14,8 @@ from isaaclab_assets.robots.franka import FRANKA_PANDA_CFG
 from isaaclab_tasks.manager_based.manipulation.stack import mdp
 from isaaclab.envs.mdp import JointPositionActionCfg, BinaryJointPositionActionCfg
 from isaaclab.markers.config import FRAME_MARKER_CFG
+from isaaclab.managers import RewardTermCfg as RewTerm
+import rewards_SK
 
 
 _FRANKA_STACK_IK_REL_INIT_JOINT_POS: dict[str, float] = {
@@ -51,6 +53,15 @@ class EventCfg:
 
 
 @configclass
+class RewardsCfg:
+    grasping_reward = RewTerm (func = rewards_SK.grasp_reward,params = {
+            "robot_cfg": SceneEntityCfg("robot"),
+            "ee_frame_cfg": SceneEntityCfg("ee_frame"),
+            "object_cfg": SceneEntityCfg("cube_1"),
+            "constant": 10.0,
+            "object_grasped_reward": 5.0},weight = 1.0)
+
+@configclass
 class Franka_Env_Cfg(StackEnvCfg):
 
     def __post_init__(self):
@@ -64,6 +75,7 @@ class Franka_Env_Cfg(StackEnvCfg):
         self.gripper_threshold = 0.005
 
         self.events=EventCfg()
+        self.rewards = RewardsCfg()
 
         self.scene.robot = FRANKA_PANDA_CFG.replace(
             prim_path = "{ENV_REGEX_NS}/Robot",
