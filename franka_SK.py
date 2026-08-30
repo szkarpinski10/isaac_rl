@@ -129,7 +129,7 @@ class Franka_Env_Cfg(StackEnvCfg):
                 ),
                 collision_props=sim_utils.CollisionPropertiesCfg(),
                 visual_material=sim_utils.PreviewSurfaceCfg(
-                    diffuse_color=(1.0, 0.0, 0.0),
+                    diffuse_color=(0.0, 1.0, 0.0),
                 ),
                 physics_material=sim_utils.RigidBodyMaterialCfg(
                     static_friction=0.5,
@@ -150,7 +150,7 @@ class Franka_Env_Cfg(StackEnvCfg):
                 ),
                 collision_props=sim_utils.CollisionPropertiesCfg(),
                 visual_material=sim_utils.PreviewSurfaceCfg(
-                    diffuse_color=(1.0, 0.0, 0.0),
+                    diffuse_color=(0.0, 0.0, 1.0),
                 ),
                 physics_material=sim_utils.RigidBodyMaterialCfg(
                     static_friction=0.5,
