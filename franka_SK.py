@@ -37,7 +37,7 @@ class EventCfg:
         mode = "reset",
         params = {
             "mean" : 0.0,
-            "std" : 0.8,
+            "std" : 0.1,
             "asset_cfg": SceneEntityCfg("robot"),
         }
     )
@@ -63,11 +63,14 @@ class RewardsCfg:
 
 @configclass
 class Franka_Env_Cfg(StackEnvCfg):
-    events: self.events=EventCfg()
-    rewards: self.rewards = RewardsCfg()
+    
 
     def __post_init__(self):
+        
         super().__post_init__()
+
+        self.events=EventCfg()
+        self.rewards = RewardsCfg()
         self.scene.num_envs = 4         
         self.scene.env_spacing = 3.0
 
