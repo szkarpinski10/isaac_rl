@@ -1,8 +1,7 @@
 import torch
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.envs import ManagerBasedRLEnv
-import observations
-
+from isaaclab_tasks.manager_based.manipulation.stack.mdp.observations import object_grasped
 def grasp_reward (env: ManagerBasedRLEnv, robot_cfg: SceneEntityCfg, ee_frame_cfg: SceneEntityCfg, object_cfg: SceneEntityCfg, constant: float,object_grasped_reward: float
                     )-> torch.Tensor:
 
@@ -10,8 +9,8 @@ def grasp_reward (env: ManagerBasedRLEnv, robot_cfg: SceneEntityCfg, ee_frame_cf
     ee_frame: FrameTransformer = env.scene[ee_frame_cfg.name]
     object: RigidObject = env.scene[object_cfg.name]
 
-    object_pos = object.data.root_pos_w.torch
-    end_effector_pos = ee_frame.data.target_pos_w.torch[:, 0, :]
+    object_pos = object.data.root_pos_w
+    end_effector_pos = ee_frame.data.target_pos_w[:, 0, :]
     distance_ee_to_obj = torch.linalg.vector_norm(object_pos - end_effector_pos, dim=1)
     
     reward_reach = torch.exp(-distance_ee_to_obj*constant)

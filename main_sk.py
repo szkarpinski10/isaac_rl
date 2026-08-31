@@ -45,15 +45,15 @@ def main():
     print("env ready")
     
 
-    dummy_actions = torch.zeros(
-        (env.num_envs, env.action_space.shape[1]), 
-        device=env.device
-    )
 
     while simulation_app.is_running():
         # perform step
-        obs, rewards, dones, truncated, info = env.step(dummy_actions)
-
+        random_actions = 2.0 * torch.rand(
+            (env.num_envs, env.action_space.shape[1]), 
+            device=env.device
+        ) - 1.0
+        
+        obs, rewards, dones, truncated, info = env.step(random_actions)
 
 if __name__ == "__main__":
     # run the main function

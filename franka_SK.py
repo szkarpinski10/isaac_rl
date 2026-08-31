@@ -71,7 +71,7 @@ class Franka_Env_Cfg(StackEnvCfg):
 
         self.events=EventCfg()
         self.rewards = RewardsCfg()
-        self.scene.num_envs = 4         
+        self.scene.num_envs = 4096         
         self.scene.env_spacing = 3.0
 
         # utilities for gripper status check
