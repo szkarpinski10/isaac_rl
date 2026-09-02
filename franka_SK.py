@@ -15,6 +15,7 @@ from isaaclab_tasks.manager_based.manipulation.stack import mdp
 from isaaclab.envs.mdp import JointPositionActionCfg, BinaryJointPositionActionCfg
 from isaaclab.markers.config import FRAME_MARKER_CFG
 from isaaclab.managers import RewardTermCfg as RewTerm
+from isaaclab.managers import TerminationTermCfg as DoneTerm
 import rewards_SK
 
 
@@ -54,12 +55,37 @@ class EventCfg:
 
 @configclass
 class RewardsCfg:
-    grasping_reward = RewTerm (func = rewards_SK.grasp_reward,params = {
-            "robot_cfg": SceneEntityCfg("robot"),
-            "ee_frame_cfg": SceneEntityCfg("ee_frame"),
-            "object_cfg": SceneEntityCfg("cube_1"),
-            "constant": 3.0,
-            "object_grasped_reward": 5.0},weight = 1.0)
+    reach = RewTerm(
+        func=rewards_SK.reach_reward,
+        params={"robot_cfg": SceneEntityCfg("robot"), "ee_frame_cfg": SceneEntityCfg("ee_frame"), "object_cfg": SceneEntityCfg("cube_1"), "constant": 10.0},
+        weight=1.0,
+    )
+    grasp = RewTerm(
+        func=rewards_SK.grasp_reward,
+        params={"robot_cfg": SceneEntityCfg("robot"), "ee_frame_cfg": SceneEntityCfg("ee_frame"), "object_cfg": SceneEntityCfg("cube_1"), "object_grasped_reward": 1.0}
+        weight=5.0,
+    )
+    lift = RewTerm(
+        func=rewards_SK.lift_reward,
+        params={"object_cfg": SceneEntityCfg("cube_1"), "min_height": 0.05}
+        weight=15.0,
+    )
+
+
+@configclass
+class Terminations_Lift_Cube1:
+    time_out = DoneTerm(func=mdp.time_out, time_out=True)
+    cube_1_dropping = DoneTerm(
+        func=mdp.root_height_below_minimum, 
+        params={"minimum_height": -0.05, "asset_cfg": SceneEntityCfg("cube_1")}
+    )
+    
+    # Reszta wyłączona na ten etap
+    cube_2_dropping = None
+    cube_3_dropping = None
+    success = None
+
+
 
 @configclass
 class Franka_Env_Cfg(StackEnvCfg):
