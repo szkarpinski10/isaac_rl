@@ -62,18 +62,18 @@ class RewardsCfg:
     )
     grasp = RewTerm(
         func=rewards_SK.grasp_reward,
-        params={"robot_cfg": SceneEntityCfg("robot"), "ee_frame_cfg": SceneEntityCfg("ee_frame"), "object_cfg": SceneEntityCfg("cube_1"), "object_grasped_reward": 1.0}
+        params={"robot_cfg": SceneEntityCfg("robot"), "ee_frame_cfg": SceneEntityCfg("ee_frame"), "object_cfg": SceneEntityCfg("cube_1"), "object_grasped_reward": 1.0},
         weight=5.0,
     )
     lift = RewTerm(
         func=rewards_SK.lift_reward,
-        params={"object_cfg": SceneEntityCfg("cube_1"), "min_height": 0.05}
+        params={"object_cfg": SceneEntityCfg("cube_1"), "min_height": 0.05},
         weight=15.0,
     )
 
 
 @configclass
-class Terminations_Lift_Cube1:
+class Terminations_Lift_Cube_1:
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     cube_1_dropping = DoneTerm(
         func=mdp.root_height_below_minimum, 
@@ -97,6 +97,7 @@ class Franka_Env_Cfg(StackEnvCfg):
 
         self.events=EventCfg()
         self.rewards = RewardsCfg()
+        self.terminations = Terminations_Lift_Cube1()
         self.scene.num_envs = 4096         
         self.scene.env_spacing = 3.0
 
