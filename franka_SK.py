@@ -68,12 +68,7 @@ class ObservationsCfg:
         eef_quat = ObsTerm(func=mdp.ee_frame_quat)
         gripper_pos = ObsTerm(func=mdp.gripper_pos)
 
-
-
-        object_position = ObsTerm(
-            func=mdp.object_position_in_robot_root_frame,
-            params={"robot_cfg": SceneEntityCfg("robot"), "object_cfg": SceneEntityCfg("cube_1")}
-        )
+        object = ObsTerm(func=mdp.object_obs)
 
         actions = ObsTerm(func=mdp.last_action)
         
