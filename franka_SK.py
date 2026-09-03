@@ -16,6 +16,8 @@ from isaaclab.envs.mdp import JointPositionActionCfg, BinaryJointPositionActionC
 from isaaclab.markers.config import FRAME_MARKER_CFG
 from isaaclab.managers import RewardTermCfg as RewTerm
 from isaaclab.managers import TerminationTermCfg as DoneTerm
+from isaaclab.managers import ObservationGroupCfg as ObsGroup
+from isaaclab.managers import ObservationTermCfg as ObsTerm
 import rewards_SK
 
 
@@ -52,12 +54,44 @@ class EventCfg:
         },
     )
 
+@configclass
+class ObservationsCfg:
 
+    @configclass
+    class PolicyCfg(ObsGroup):
+
+
+        joint_pos = ObsTerm(func=mdp.joint_pos_rel)
+        joint_vel = ObsTerm(func=mdp.joint_vel_rel)
+
+        eef_pos = ObsTerm(func=mdp.ee_frame_pos)
+        eef_quat = ObsTerm(func=mdp.ee_frame_quat)
+        gripper_pos = ObsTerm(func=mdp.gripper_pos)
+
+
+
+        object_position = ObsTerm(
+            func=mdp.object_position_in_robot_root_frame,
+            params={"robot_cfg": SceneEntityCfg("robot"), "object_cfg": SceneEntityCfg("cube_1")}
+        )
+
+        actions = ObsTerm(func=mdp.last_action)
+        
+
+        def __post_init__(self):
+            self.enable_corruption = False
+            self.concatenate_terms = True
+
+
+    policy: PolicyCfg = PolicyCfg() 
+
+
+    
 @configclass
 class RewardsCfg:
     reach = RewTerm(
         func=rewards_SK.reach_reward,
-        params={"robot_cfg": SceneEntityCfg("robot"), "ee_frame_cfg": SceneEntityCfg("ee_frame"), "object_cfg": SceneEntityCfg("cube_1"), "constant": 10.0},
+        params={"robot_cfg": SceneEntityCfg("robot"), "ee_frame_cfg": SceneEntityCfg("ee_frame"), "object_cfg": SceneEntityCfg("cube_1"), "constant": 7.0},
         weight=1.0,
     )
     grasp = RewTerm(
@@ -67,7 +101,7 @@ class RewardsCfg:
     )
     lift = RewTerm(
         func=rewards_SK.lift_reward,
-        params={"object_cfg": SceneEntityCfg("cube_1"), "min_height": 0.05},
+        params={"object_cfg": SceneEntityCfg("cube_1"), "min_height": 0.63},
         weight=15.0,
     )
 
@@ -77,10 +111,10 @@ class Terminations_Lift_Cube_1:
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     cube_1_dropping = DoneTerm(
         func=mdp.root_height_below_minimum, 
-        params={"minimum_height": -0.05, "asset_cfg": SceneEntityCfg("cube_1")}
+        params={"minimum_height": 0.50, "asset_cfg": SceneEntityCfg("cube_1")}
     )
     
-    # Reszta wyłączona na ten etap
+  
     cube_2_dropping = None
     cube_3_dropping = None
     success = None
@@ -97,7 +131,11 @@ class Franka_Env_Cfg(StackEnvCfg):
 
         self.events=EventCfg()
         self.rewards = RewardsCfg()
-        self.terminations = Terminations_Lift_Cube1()
+        self.terminations = Terminations_Lift_Cube_1()
+        self.observations = ObservationsCfg()
+
+
+
         self.scene.num_envs = 4096         
         self.scene.env_spacing = 3.0
 
@@ -141,7 +179,7 @@ class Franka_Env_Cfg(StackEnvCfg):
         self.scene.cube_1 = RigidObjectCfg( 
             prim_path="{ENV_REGEX_NS}/Cube_1", 
             init_state=RigidObjectCfg.InitialStateCfg(
-                pos=[0.45, 0.0, 1.08],         
+                pos=[0.45, 0.0, 0.58],         
             ),
             spawn=sim_utils.CuboidCfg(
                 size=(0.05, 0.05, 0.05),
@@ -163,7 +201,7 @@ class Franka_Env_Cfg(StackEnvCfg):
         self.scene.cube_2 = RigidObjectCfg(
             prim_path="{ENV_REGEX_NS}/Cube_2",  
             init_state=RigidObjectCfg.InitialStateCfg(
-                pos=[0.50, 0.0, 1.08],         
+                pos=[0.50, 0.0, 0.58],         
             ),
             spawn=sim_utils.CuboidCfg(
                 size=(0.05, 0.05, 0.05),
@@ -184,7 +222,7 @@ class Franka_Env_Cfg(StackEnvCfg):
         self.scene.cube_3 = RigidObjectCfg(
             prim_path="{ENV_REGEX_NS}/Cube_3",  
             init_state=RigidObjectCfg.InitialStateCfg(
-                pos=[0.55, 0.0, 1.08],         
+                pos=[0.55, 0.0, 0.58],         
             ),
             spawn=sim_utils.CuboidCfg(
                 size=(0.05, 0.05, 0.05),
